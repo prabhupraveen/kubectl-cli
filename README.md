@@ -24,6 +24,9 @@ kubectl-cli implemented as a very thin python wrapper over kubectl command. Cons
 <li>Displays prompt with namespce and current context
 <li>Get list of configured kubectl contexts using get_contexts
 <li>Change context using set_context
-<li>Set namespace to be used when executing command
+<li>Set namespace to be used when executing command, no need to specify -n <namespace> (however, you can still use -A)
 <li>Clear the screen using clear command
 </ul>
+
+## Known Limitations
+It is not possible to get a shell into a running container in the cluster. You need to exit from kubectl-cli. If you know how to 'connect' python subprocess pipe to the kubectl console input/outuput pipe, I am more than happy to accept a PR.
