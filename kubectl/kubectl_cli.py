@@ -2,7 +2,7 @@ from cmd import Cmd
 import subprocess
 import os
  
-class MyPrompt(Cmd):
+class KubectlCli(Cmd):
     
     intro = "Welcome! Type ? to list commands"
     kubectlcmd = ['kubectl']
@@ -10,7 +10,7 @@ class MyPrompt(Cmd):
     clearcmd = ""
 
     def __init__(self):
-        super(MyPrompt, self).__init__()
+        super(KubectlCli, self).__init__()
         self.set_prompt(self.get_cur_context(), self.namespace)
         if os.name == "posix":
             self.clearcmd = "clear"
@@ -71,14 +71,30 @@ class MyPrompt(Cmd):
         return subprocess.run(['kubectl', 'config', 'current-context'], stdout=subprocess.PIPE).stdout.decode('utf-8').strip()
 
     def process_cmd(self, inp):
-        args = inp.split()
+        cmdpart = inp
+        shellpart = None
+        idx = inp.find("-- ")
+        if inp.startswith("exec") and idx > 0:
+            cmdpart = inp[0:idx]
+            shellpart = inp[idx:]
+        
+        args = cmdpart.split()
         finalCommand = self.kubectlcmd + args
         if inp.find('-A') < 0 and args[0] != "config":
             finalCommand = finalCommand + ['-n', self.namespace]
-        result = subprocess.run(finalCommand, stdout=subprocess.PIPE).stdout.decode('utf-8').strip()
-        print("{}\n".format(result))
- 
+        
+        if shellpart != None:
+            shellpart = shellpart.replace('"', '')
+            shellpart = shellpart.replace("'", "")
+            finalCommand = finalCommand + shellpart.split()
+            callProcess = subprocess.Popen(finalCommand, shell=True)
+            callProcess.communicate()
+        else:
+            result = subprocess.run(finalCommand, stdout=subprocess.PIPE).stdout.decode('utf-8').strip()
+            print("{}\n".format(result))
+
     def default(self, inp):
+        inp = inp.strip()
         if inp == 'x' or inp == 'q':
             return self.do_exit(inp)
         else:
@@ -88,8 +104,6 @@ class MyPrompt(Cmd):
                     self.do_set_context(cmds[2])
                 else:
                     print("To set context use command set_context <context>")
-            elif inp.find("-- ") > 0:
-                print("Executing shell commands on pod not supported from kubectl-cli. Exit kubectl-cli and try.")
             else:
                 return self.process_cmd(inp)
  
@@ -97,4 +111,4 @@ class MyPrompt(Cmd):
     help_EOF = help_exit
  
 if __name__ == '__main__':
-    MyPrompt().cmdloop()
+    KubectlCli().cmdloop()
