@@ -4,7 +4,7 @@ import os
  
 class KubectlCli(Cmd):
     
-    intro = "Welcome! Type ? to list commands"
+    intro = "Welcome to kubectl-cli! Type ? to list commands"
     kubectlcmd = ['kubectl']
     namespace = "default"
     clearcmd = ""
@@ -19,6 +19,7 @@ class KubectlCli(Cmd):
 
     def do_set_context(self, inp):
         self.process_cmd("config use-context {}".format(inp))
+        self.namespace = "default"
         self.set_prompt(self.get_cur_context(), self.namespace)
     
     def do_get_contexts(self, inp):
