@@ -88,6 +88,8 @@ class MyPrompt(Cmd):
                     self.do_set_context(cmds[2])
                 else:
                     print("To set context use command set_context <context>")
+            elif inp.find("-- ") > 0:
+                print("Executing shell commands on pod not supported from kubectl-cli. Exit kubectl-cli and try.")
             else:
                 return self.process_cmd(inp)
  
