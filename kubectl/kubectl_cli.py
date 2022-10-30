@@ -81,7 +81,7 @@ class KubectlCli(Cmd):
         
         args = cmdpart.split()
         finalCommand = self.kubectlcmd + args
-        if inp.find('-A') < 0 and args[0] != "config":
+        if inp.find('-A') < 0 and inp.find('-n') < 0 and args[0] != "config":
             finalCommand = finalCommand + ['-n', self.namespace]
         
         if shellpart != None:
