@@ -94,6 +94,17 @@ class KubectlCli(Cmd):
             result = subprocess.run(finalCommand, stdout=subprocess.PIPE).stdout.decode('utf-8').strip()
             print("{}\n".format(result))
 
+    def process_os_cmd(self, cmd):
+        if cmd.startswith("cd") :
+            idx = cmd.find(' ')
+            if(idx > 0):
+                cmd = (cmd[idx:]).strip()
+                os.chdir(cmd)
+            else:
+                os.system(cmd)
+        else:
+            os.system(cmd)
+
     def default(self, inp):
         inp = inp.strip()
         if inp == 'x' or inp == 'q':
@@ -105,6 +116,9 @@ class KubectlCli(Cmd):
                     self.do_set_context(cmds[2])
                 else:
                     print("To set context use command set_context <context>")
+            elif inp[0] == '!':
+                cmd = inp[1:]
+                return self.process_os_cmd(cmd)
             else:
                 return self.process_cmd(inp)
  

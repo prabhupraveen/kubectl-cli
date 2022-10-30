@@ -26,4 +26,10 @@ kubectl-cli implemented as a very thin python wrapper over kubectl command. Cons
 <li>Change context using set_context
 <li>Set namespace to be used when executing command, no need to specify -n <namespace> (however, you can still use -A)
 <li>Clear the screen using clear command
+<li>Run any os commands (e.g. dir, cd etc. by prefixing !, ex. !dir)
+</ul>
+
+## Futre enhancements
+<ul>
+<li>Add validation to set_namspace to detect misspelled namespaces
 </ul>
